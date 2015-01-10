@@ -1,3 +1,7 @@
 .classpath
 bin
 gen
+*.project
+libs/android-support-v4.jar
+proguard-project.txt
+*.properties
