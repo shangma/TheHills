@@ -35,54 +35,34 @@
 
                 <Button
                     android:id="@+id/insideEventBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    style="@style/buttoninmain"
                     android:onClick="onInsideEventBtn"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:text="Inside Events"
-                    android:textSize="30dp"/>
+                    android:text="Inside Events"/>
 
                 <Button
                     android:id="@+id/insideLocationBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
+                    style="@style/buttoninmain"
                     android:onClick="onInsideLocationBtn"
-                    android:text="Inside Location"
-                    android:textSize="30dp" />
+                    android:text="Inside Location" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal" >
 
                 <Button
                     android:id="@+id/outsideEventBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
+                    style="@style/buttoninmain"
                     android:onClick="onOutsideEventBtn"
-                    android:text="Outside Event"
-                    android:textSize="30dp" />
+                    android:text="Outside Events"/>
 
                 <Button
                     android:id="@+id/outsideLocationBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
+                    style="@style/buttoninmain"
                     android:onClick="onOutsideLocationBtn"
-                    android:text="Outside Location"
-                    android:textSize="30dp"/>
+                    android:text="Outside Location"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
