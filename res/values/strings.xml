@@ -26,14 +26,24 @@
     </array>
     
     
-	<string name="responseForPlace">This is what I found.</string>
-    <array name="placeCommand">
+	<string name="responseOutsideForPlace">This is what I found outside.</string>
+    <array name="outsidePlaceCommand">
         <item>atm</item>
         <item>bank</item>
         <item>pharmacy</item>
         <item>cafe</item>
         <item>restaurant</item>
         <item>mall</item>
+    </array>
+    
+	<string name="responseInsideForPlace">Here is the direction to the %1$s</string>
+    <array name="insidePlaceCommand">
+        <item>icsc conference</item>
+        <item>icsc</item>
+        <item>conference</item>
+        <item>emerald</item>
+        <item>emerald lounge</item>
+        <item>first floor</item>
     </array>
 
 </resources>

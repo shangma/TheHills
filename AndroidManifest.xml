@@ -46,9 +46,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="info.shangma.thehills.mapoutside.LocationActivity" />
+        <activity android:name="info.shangma.thehills.map.outside.LocationActivity" />
 		<activity android:name="info.shangma.thehills.voice.SpeechRecognitionLauncher" />
 		<activity android:name="info.shangma.thehills.AcknowledgementPresentActivity" />
+		<activity android:name="info.shangma.thehills.event.WebViewActivity" />
+		<activity android:name="info.shangma.thehills.map.inside.InsideDirectionActivity" />
 		
 
         <meta-data

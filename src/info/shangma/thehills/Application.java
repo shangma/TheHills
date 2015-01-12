@@ -1,6 +1,6 @@
 package info.shangma.thehills;
 
-import info.shangma.thehills.mapoutside.Place;
+import info.shangma.thehills.map.outside.Place;
 import info.shangma.thehills.voice.util.ConnectToServerThread;
 import info.shangma.thehills.voice.util.ServerThread;
 

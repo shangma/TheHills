@@ -39,15 +39,21 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:onClick="onInsideEventBtn"
-                    android:text="Inside Events" />
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:text="Inside Events"
+                    android:textSize="30dp"/>
 
                 <Button
                     android:id="@+id/insideLocationBtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
                     android:onClick="onInsideLocationBtn"
-                    android:text="Inside Location" />
+                    android:text="Inside Location"
+                    android:textSize="30dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -61,16 +67,22 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
                     android:onClick="onOutsideEventBtn"
-                    android:text="Outside Event" />
+                    android:text="Outside Event"
+                    android:textSize="30dp" />
 
                 <Button
                     android:id="@+id/outsideLocationBtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
                     android:onClick="onOutsideLocationBtn"
-                    android:text="Outside Location" />
+                    android:text="Outside Location"
+                    android:textSize="30dp"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

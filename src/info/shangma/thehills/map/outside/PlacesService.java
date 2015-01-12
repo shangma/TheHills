@@ -1,4 +1,4 @@
-package info.shangma.thehills.mapoutside;
+package info.shangma.thehills.map.outside;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

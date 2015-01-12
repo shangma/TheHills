@@ -1,4 +1,4 @@
-package info.shangma.thehills.mapoutside;
+package info.shangma.thehills.map.outside;
 
 import info.shangma.thehills.Application;
 import info.shangma.thehills.R;
