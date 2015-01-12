@@ -3,8 +3,8 @@ package info.shangma.thehills.voice.command;
 import info.shangma.thehills.AcknowledgementPresentActivity;
 import info.shangma.thehills.Application;
 import info.shangma.thehills.R;
-import info.shangma.thehills.mapoutside.GetPlace;
-import info.shangma.thehills.mapoutside.LocationActivity;
+import info.shangma.thehills.map.outside.GetPlace;
+import info.shangma.thehills.map.outside.LocationActivity;
 import info.shangma.thehills.voice.SpeechRecognitionLauncher;
 import info.shangma.utils.string.Inflector;
 
@@ -46,7 +46,7 @@ import android.util.Log;
  * @author Greg Milette &#60;<a href="mailto:gregorym@gmail.com">gregorym@gmail.com</a>&#62;
  *
  */
-public class PlaceCommand implements VoiceActionCommand
+public class OutsidePlaceCommand implements VoiceActionCommand
 {
 	private final static String TAG = "PlaceCommand";
     private VoiceActionExecutor executor;
@@ -63,12 +63,12 @@ public class PlaceCommand implements VoiceActionCommand
 	
 	private GetPlace placeTask;
     
-    public PlaceCommand(Context context, VoiceActionExecutor executor)
+    public OutsidePlaceCommand(Context context, VoiceActionExecutor executor)
     {
     	this.mContext = context;
         this.executor = executor;
-        this.placePrompt = context.getResources().getString(R.string.responseForPlace);
-        this.matcher = new WordMatcher(context.getResources().getStringArray(R.array.placeCommand));
+        this.placePrompt = context.getResources().getString(R.string.responseOutsideForPlace);
+        this.matcher = new WordMatcher(context.getResources().getStringArray(R.array.outsidePlaceCommand));
         
         alchemyObj = AlchemyAPI.GetInstanceFromString("f54e554a09119e3cb6e5c8485118b1a31736e996");
     	mInflector = Inflector.getInstance();        
@@ -130,11 +130,11 @@ public class PlaceCommand implements VoiceActionCommand
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
-							Intent intent = new Intent(PlaceCommand.this.mContext,LocationActivity.class);
+							Intent intent = new Intent(OutsidePlaceCommand.this.mContext,LocationActivity.class);
 							intent.putExtra(LocationActivity.CURRENT_PLACE, finalString);
 							intent.putExtra(LocationActivity.CURRENT_PLACE_TYPE, LocationActivity.PLACE_WITH_KEYWORD_SEARCH);
-							((SpeechRecognitionLauncher) PlaceCommand.this.mContext).startActivity(intent);
-							((SpeechRecognitionLauncher) PlaceCommand.this.mContext).finish();
+							((SpeechRecognitionLauncher) OutsidePlaceCommand.this.mContext).startActivity(intent);
+							((SpeechRecognitionLauncher) OutsidePlaceCommand.this.mContext).finish();
 						}
 					}, 1000);
 					

@@ -4,7 +4,8 @@ package info.shangma.thehills.voice;
 import info.shangma.thehills.AcknowledgementPresentActivity;
 import info.shangma.thehills.R;
 import info.shangma.thehills.voice.command.CancelCommand;
-import info.shangma.thehills.voice.command.PlaceCommand;
+import info.shangma.thehills.voice.command.InsidePlaceCommand;
+import info.shangma.thehills.voice.command.OutsidePlaceCommand;
 import info.shangma.thehills.voice.util.SoundPoolPlayerEx;
 
 import java.util.Arrays;
@@ -27,17 +28,16 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.WindowManager;
 
-
-/**
- * Starts a speech recognition dialog and then sends the results to
- * {@link SpeechRecognitionResultsActivity}
- * 
- * @author Greg Milette &#60;<a
- *         href="mailto:gregorym@gmail.com">gregorym@gmail.com</a>&#62;
- */
 public class SpeechRecognitionLauncher extends
 		SpeechRecognizingAndSpeakingActivity {
 	private static final String TAG = "SpeechRecognitionLauncher";
+	public static final String TYPE_OF_LOCATION_OR_EVENT = "info.shangma.thehills.locationAndevent";
+	
+	public static final int INVALID_TYPE = -1;
+	public static final int INSIDE_EVENT = 1;
+	public static final int INSIDE_LOCATION = 2;
+	public static final int OUTSIDE_EVENT = 3;
+	public static final int OUTSIDE_LOCATION = 4;
 
 	private static final String ON_DONE_PROMPT_TTS_PARAM = "ON_DONE_PROMPT";
 
@@ -45,7 +45,9 @@ public class SpeechRecognitionLauncher extends
 
 	private VoiceAction hotleVoiceAction;
 	
-	private SoundPoolPlayerEx mSoundPlayer; 
+	private SoundPoolPlayerEx mSoundPlayer;
+	
+	private int voiceActionType;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +66,24 @@ public class SpeechRecognitionLauncher extends
 		
 		mSoundPlayer = new SoundPoolPlayerEx(this);
 		executor.setSoundPlayer(mSoundPlayer);
-		hotleVoiceAction = makeHotelVoiceAction();
-
+		
+		voiceActionType = getIntent().getIntExtra(this.TYPE_OF_LOCATION_OR_EVENT, -1);
+		
+		if (voiceActionType == this.INVALID_TYPE) {
+			Log.d(TAG, "input is invalid");
+		} else if (voiceActionType ==  this.OUTSIDE_LOCATION) {
+			Log.d(TAG, "input is for outside location");
+			hotleVoiceAction = outsidePlaceVoiceAction();
+		} else if (voiceActionType == this.INSIDE_LOCATION) {
+			Log.d(TAG, "input is for inside location");
+			hotleVoiceAction = insidePlaceVoiceAction();
+		} else if (voiceActionType == this.OUTSIDE_EVENT) {
+			Log.d(TAG, "input is for outside event");
+			
+		} else {
+			Log.d(TAG, "input is for inside event");
+		}
+		
 		Log.i(TAG, "finish initialization");
 	}
 
@@ -78,21 +96,39 @@ public class SpeechRecognitionLauncher extends
 		Log.d(TAG, "Ready for the first query");
 		executor.execute(hotleVoiceAction);
 	}
+	
+	private VoiceAction insidePlaceVoiceAction() {
+		Log.d(TAG, "insideLocationVoiceAction");
+		boolean relaxed = false;
+		
+		VoiceActionCommand cancelCommand = new CancelCommand(this, executor);
+		VoiceActionCommand insidePlaceCommand = new InsidePlaceCommand(this, executor);
+		
+		VoiceAction voiceAction = new MultiCommandVoiceAction(Arrays.asList(cancelCommand, insidePlaceCommand));
+		voiceAction.setNotUnderstood(new WhyNotUnderstoodListener(this, executor, false));
+		
+		String LOOKUP_PROMPT = getResources().getString(R.string.speech_launcher_prompt);
+		voiceAction.setPrompt(LOOKUP_PROMPT);
+		voiceAction.setSpokenPrompt(LOOKUP_PROMPT);
+		
+		voiceAction.setActionType(AbstractVoiceAction.FirstVoiceActionOutofTwo);
+		
+		return voiceAction;
+		
+	}
 
-	private VoiceAction makeHotelVoiceAction() {
+	private VoiceAction outsidePlaceVoiceAction() {
 		
 		// match it with two levels of strictness
-		Log.d(TAG, "makeHotelVoiceAction");
+		Log.d(TAG, "outsideLocationVoiceAction");
 		boolean relaxed = false;
 
 		VoiceActionCommand cancelCommand = new CancelCommand(this, executor);
-		VoiceActionCommand lookupCommand = new PlaceCommand(this, executor);
+		VoiceActionCommand outsidePlaceCommand = new OutsidePlaceCommand(this, executor);
 
-		VoiceAction voiceAction = new MultiCommandVoiceAction(Arrays.asList(
-				cancelCommand, lookupCommand));
+		VoiceAction voiceAction = new MultiCommandVoiceAction(Arrays.asList(cancelCommand, outsidePlaceCommand));
 		// don't retry
-		voiceAction.setNotUnderstood(new WhyNotUnderstoodListener(this,
-				executor, false));
+		voiceAction.setNotUnderstood(new WhyNotUnderstoodListener(this, executor, false));
 		
 		String LOOKUP_PROMPT = getResources().getString(R.string.speech_launcher_prompt);
 		voiceAction.setPrompt(LOOKUP_PROMPT);

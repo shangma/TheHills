@@ -2,7 +2,8 @@ package info.shangma.thehills;
 
 import com.wowwee.robome.RoboMe;
 
-import info.shangma.thehills.mapoutside.LocationActivity;
+import info.shangma.thehills.event.WebViewActivity;
+import info.shangma.thehills.map.outside.LocationActivity;
 import info.shangma.thehills.voice.SpeechRecognitionLauncher;
 import android.app.Activity;
 import android.content.Intent;
@@ -40,18 +41,28 @@ public class MainActivity extends Activity {
 
 	public void onInsideEventBtn(View view) {
 		Log.d(TAG, "inside event button clicked");
-	}
-	
-	public void onInsideLocationBtn(View view) {
-		Log.d(TAG, "inside location button clicked");
+		Intent intent = new Intent(this, WebViewActivity.class);
+		intent.putExtra(WebViewActivity.DISPLAY_THIS_URL, "http://128.195.204.85/robot/hotelmanage.jsp");
+		startActivity(intent);
 	}
 	
 	public void onOutsideEventBtn(View view) {
 		Log.d(TAG, "outside event button clicked");
+		Intent intent = new Intent(this, WebViewActivity.class);
+		intent.putExtra(WebViewActivity.DISPLAY_THIS_URL, "http://www.meetup.com/cities/us/ca/laguna_hills/");
+		startActivity(intent);
+	}
+	
+	public void onInsideLocationBtn(View view) {
+		Log.d(TAG, "inside location button clicked");
+		Intent intent = new Intent(this, SpeechRecognitionLauncher.class);
+		intent.putExtra(SpeechRecognitionLauncher.TYPE_OF_LOCATION_OR_EVENT, SpeechRecognitionLauncher.INSIDE_LOCATION);
+		startActivity(intent);
 	}
 
 	public void onOutsideLocationBtn(View view) {
 		Intent intent = new Intent(this, SpeechRecognitionLauncher.class);
+		intent.putExtra(SpeechRecognitionLauncher.TYPE_OF_LOCATION_OR_EVENT, SpeechRecognitionLauncher.OUTSIDE_LOCATION);
 		startActivity(intent);
 	}
 }
