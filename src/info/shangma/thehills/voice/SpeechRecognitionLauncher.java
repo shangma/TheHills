@@ -121,7 +121,7 @@ public class SpeechRecognitionLauncher extends
 		// satisfy abstract class, this class handles the results directly
 		// instead of using this method
 //		for (String word : heard) {
-//			Log.d(TAG, "1: I heard: " + word);
+//			Log.d(TAG, "I heard: " + word);
 //		}
 		Log.d(TAG, "I just received " + heard.size());
 		

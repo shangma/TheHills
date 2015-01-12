@@ -1,9 +1,14 @@
 package info.shangma.thehills.mapoutside;
 
+import info.shangma.thehills.Application;
 import info.shangma.thehills.R;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 
 import com.directions.route.Route;
@@ -13,6 +18,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.drive.internal.am;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,6 +36,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -47,8 +54,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class LocationActivity extends FragmentActivity implements 
 							OnMapReadyCallback, OnCameraChangeListener,
@@ -57,6 +68,8 @@ public class LocationActivity extends FragmentActivity implements
 							RoutingListener {
 	
 	private final static String TAG = "LocationActivity";
+	public final static String CURRENT_PLACE = "info.shangma.thehills.currentPlace";
+	public final static String CURRENT_PLACE_TYPE = "info.shangma.thehills.currentPlaceType";
 	
 	// for map
 	private GoogleMap mMap;
@@ -83,13 +96,10 @@ public class LocationActivity extends FragmentActivity implements
     private float PREFERRED_ZOOM_LEVEL = 17.0f;
     
     // for places
-	private String[] places;
-	private LocationManager locationManager;
-	private Location currentLocation;
-	private LatLng currentLatLng;
+
 	
+
 	private final Random mRandom = new Random();
-	private ProgressDialog dialog;
 	
     private Marker mMyLocationMarker;
     private Marker mTheHillsMarker;
@@ -103,11 +113,25 @@ public class LocationActivity extends FragmentActivity implements
     private CheckBox checkBoxRestaurant;
     private CheckBox checkBoxShopping;
     
+    private ListView listPlace;
+    private Map<String, MarkerOptions> mapMarkerOptions;
+    
     // for routing
 //    private Location destinationLocation;
     private LatLng destinationLatLng;
-   
-
+    
+    // from caller
+    
+    private String targetPlaceKeyword;
+    private int targetPlaceType = -1;
+    
+    public final static int PLACE_WITH_RIGHT_TYPE = 0;
+    public final static int PLACE_WITH_KEYWORD_SEARCH =1;
+    
+    // 
+    private GetPlace placeTask;
+    private ArrayList<Place> foundPlaces;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -118,14 +142,12 @@ public class LocationActivity extends FragmentActivity implements
 				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		
 		setContentView(R.layout.activity_location);
-		
-		places = getResources().getStringArray(R.array.places);
-		
+				
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mapFragment.getMapAsync(this);
 
-		
+		/*
 		checkBoxAll = (CheckBox) findViewById(R.id.checkbox_all);
 	    checkBoxATM = (CheckBox) findViewById(R.id.checkbox_atm);
 	    checkBoxBank = (CheckBox) findViewById(R.id.checkbox_bank);
@@ -133,6 +155,24 @@ public class LocationActivity extends FragmentActivity implements
 	    checkBoxCafe = (CheckBox) findViewById(R.id.checkbox_cafe);
 	    checkBoxRestaurant = (CheckBox) findViewById(R.id.checkbox_restaurant);
 	    checkBoxShopping = (CheckBox) findViewById(R.id.checkbox_shopping);
+	    */
+		
+	    
+	    targetPlaceKeyword = getIntent().getStringExtra(this.CURRENT_PLACE);
+	    if (targetPlaceKeyword != null) {
+	    	targetPlaceType = getIntent().getIntExtra(this.CURRENT_PLACE_TYPE, -1);		
+		}
+	    
+
+		if ((targetPlaceKeyword!= null)&&(targetPlaceType != -1)) {
+			Log.d(TAG, "listview ready");
+			foundPlaces = ((Application)this.getApplicationContext()).getFoundPlaces();
+			PlaceListAdpater adapter = new PlaceListAdpater(foundPlaces);
+			
+			listPlace = (ListView) findViewById(R.id.list_place);
+			listPlace.setAdapter(adapter);
+			
+		}
 	
 	}
 	
@@ -141,158 +181,108 @@ public class LocationActivity extends FragmentActivity implements
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		if (dialog != null) {
-			dialog.dismiss();
-			dialog = null;
-		}
 	}
 
+	private class PlaceListAdpater extends ArrayAdapter<Place> {
 
-	private void currentLocation() {
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-		String provider = locationManager
-				.getBestProvider(new Criteria(), false);
-
-		Location location = locationManager.getLastKnownLocation(provider);
-
-		if (location == null) {
-			locationManager.requestLocationUpdates(provider, 0, 0, listener);
-		} else {
-			currentLocation = location;
-			Log.d(TAG, "places[0]: " + places[0]);
-//			new GetPlaces(MainActivity.this, places[0].toLowerCase().replace("-", "_")).execute();
-			
-			CameraPosition cameraPosition = new CameraPosition.Builder()
-										.target(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())) 
-										.zoom(14) // Sets the zoom
-										.tilt(30) // Sets the tilt of the camera to 30 degrees
-										.build(); // Creates a CameraPosition from the builder
-			
-			mMap.animateCamera(CameraUpdateFactory
-					.newCameraPosition(cameraPosition));
-			
-			Log.e(TAG, "location : " + location);
-		}
-		
-		currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-		mCurrentLocationMarker = mMap.addMarker(new MarkerOptions()
-		.position(currentLatLng)
-		.title("Your Location")
-		.snippet("This is your current location")
-		.icon(BitmapDescriptorFactory.defaultMarker(mRandom.nextFloat() * 360)));
-
-	}
-
-	private class GetPlaces extends AsyncTask<Void, Void, ArrayList<Place>> {
-
-		private Context context;
-		private String places;
-		private int locationType;
-
-		public GetPlaces(Context context, String places, int type) {
-			this.context = context;
-			this.places = places;
-			this.locationType = type;
+		public PlaceListAdpater(ArrayList<Place> places) {
+			super(getApplicationContext(), 0, places);
+			// TODO Auto-generated constructor stub
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<Place> result) {
-			super.onPostExecute(result);
-			if (dialog.isShowing()) {
-				dialog.dismiss();
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+			
+			if (convertView == null) {
+				convertView = getLayoutInflater().inflate(R.layout.list_item_place, null);
 			}
-			if (result.size() > 0) {
-				for (int i = 0; i < result.size(); i++) {
-					mMap.addMarker(new MarkerOptions()
-							.title(result.get(i).getName())
-							.position(
-									new LatLng(result.get(i).getLatitude(), result
-											.get(i).getLongitude()))
-							.icon(BitmapDescriptorFactory.defaultMarker(mRandom.nextFloat() * 360))
-							.alpha((float)(mRandom.nextFloat()*0.5+0.5)) // alpha is always greater than 0.5
-							.snippet(result.get(i).getVicinity()));
-				}
-				CameraPosition cameraPosition = new CameraPosition.Builder()
-						.target(new LatLng(result.get(0).getLatitude(), result
-								.get(0).getLongitude()))
-						.zoom(14) 
-						.tilt(30) 
-						.build(); 
+			
+			final Place aPlace = getItem(position);
+			
+			TextView titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
+			titleTextView.setText(aPlace.getName());
+			
+			TextView snippetView = (TextView) convertView.findViewById(R.id.snipTextView);
+			snippetView.setText(aPlace.getVicinity());
+			
+			TextView idView = (TextView) convertView.findViewById(R.id.idTextView);
+			idView.setText(aPlace.getId());
+			
+			convertView.setOnClickListener(new View.OnClickListener() {
 				
-				mMap.animateCamera(CameraUpdateFactory
-						.newCameraPosition(cameraPosition));
-			}
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			dialog = new ProgressDialog(context);
-			dialog.setCancelable(false);
-			dialog.setMessage("Loading..");
-			dialog.isIndeterminate();
-			dialog.show();
-		}
-
-		@Override
-		protected ArrayList<Place> doInBackground(Void... args) {
-			PlacesService service = new PlacesService(
-					"AIzaSyCIjhxW0q69NqchGywwFOtl0ERpQQjTgTE");
-			Log.d(TAG, "location type is: " + this.locationType);
-			ArrayList<Place> findPlaces = service.findPlaces(currentLocation.getLatitude(), // 28.632808
-					currentLocation.getLongitude(), places, this.locationType); // 77.218276
-
-			for (int i = 0; i < findPlaces.size(); i++) {
-
-				Place placeDetail = findPlaces.get(i);
-				Log.e(TAG, "places : " + placeDetail.getName());
-			}
-			return findPlaces;
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Log.d(TAG, "I got clicked: " + aPlace.getId());
+					if (mapMarkerOptions.size() > 0) {
+						
+						showAllMarkerOnMap();
+						MarkerOptions mOptions = mapMarkerOptions.get(aPlace.getId());
+						LocationActivity.this.setDestinationForRouting(mOptions);
+					}
+				}
+			});
+			
+			return convertView;
 		}
 	}
 	
+	
 	public void onCheckboxAll(View view) {
-		this.displayTargetPlace();
+		this.fetchTargetPlaces();
 	}
 	public void onCheckboxATM(View view) {
 		checkBoxAll.setChecked(false);
-		this.displayTargetPlace();
+		this.fetchTargetPlaces();
 	}
 
 	public void onCheckboxBank(View view) {
 		checkBoxAll.setChecked(false);
-		this.displayTargetPlace();
+		this.fetchTargetPlaces();
 	}
 
 	public void onCheckboxPharmacy(View view) {
 		checkBoxAll.setChecked(false);
 
-		this.displayTargetPlace();
+		this.fetchTargetPlaces();
 	}
 
 	public void onCheckboxcafe(View view) {
 		checkBoxAll.setChecked(false);
 
-		this.displayTargetPlace();
+		this.fetchTargetPlaces();
 	}
 
 	public void onCheckboxRestaurant(View view) {
 		checkBoxAll.setChecked(false);
 
-		this.displayTargetPlace();
+		this.fetchTargetPlaces();
 	}
 
 	public void onCheckboxShopping(View view) {
 		checkBoxAll.setChecked(false);
 
-		this.displayTargetPlace();
+		this.fetchTargetPlaces();
 	}
 	
-	private void displayTargetPlace() {
+	private void fetchTargetPlaces() {
 		
+		Location currentLocation = ((Application)getApplication()).getCurrentLocation();
 		if (checkBoxAll.isChecked()) {
-			new GetPlaces(LocationActivity.this, "atm|bank|pharmacy|cafe|restaurant|shopping_mall", 0).execute();
+			try {
+//				placeTask = new GetPlace(this, "atm|bank|pharmacy|cafe|restaurant|shopping_mall", this.PLACE_WITH_RIGHT_TYPE, currentLocation);
+				placeTask.execute();
+				placeTask.get();
+				createTargetMarkers();
+				
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return;
 		}
 		
@@ -322,9 +312,73 @@ public class LocationActivity extends FragmentActivity implements
 		if (targetPlaceBuilder.length() > 0) {
 			String targetString = targetPlaceBuilder.substring(0, targetPlaceBuilder.length()-1).toString();
 			Log.d(TAG, "request target string: " + targetString);
-			new GetPlaces(LocationActivity.this, targetString, 0).execute();
+			/*
+			try {
+				placeTask = new GetPlace(this, targetString, this.PLACE_WITH_RIGHT_TYPE, currentLocation);
+				placeTask.execute();
+				placeTask.get();
+				displayTargetPlaces();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
 		}
 	}
+	
+	private void createTargetMarkers() {
+		
+		if (foundPlaces.size() >0) {
+			
+			mapMarkerOptions = new TreeMap<String, MarkerOptions>();
+			
+			for (int i = 0; i < foundPlaces.size(); i++) {
+				MarkerOptions mOptions = new MarkerOptions()
+						.title(foundPlaces.get(i).getName())
+						.position(new LatLng(foundPlaces.get(i).getLatitude(), 
+								foundPlaces.get(i).getLongitude()))
+						.icon(BitmapDescriptorFactory.defaultMarker(mRandom.nextFloat() * 360))
+						.alpha((float)(mRandom.nextFloat()*0.5+0.5)) // alpha is always greater than 0.5
+						.snippet(foundPlaces.get(i).getVicinity());
+				mapMarkerOptions.put(foundPlaces.get(i).getId(), mOptions);
+				
+			}
+			
+			this.showAllMarkerOnMap();
+			
+			Log.d(TAG, "mapMarker's size is:" + mapMarkerOptions.size());
+						
+			CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(new LatLng(foundPlaces.get(0).getLatitude(), foundPlaces.get(0).getLongitude()))
+					.zoom(14) 
+					.tilt(30) 
+					.build(); 
+			
+			mMap.animateCamera(CameraUpdateFactory
+					.newCameraPosition(cameraPosition));
+		}
+	}
+	
+	private void showAllMarkerOnMap() {
+		
+		if (mapMarkerOptions.size() > 0) {
+			
+			mMap.clear();
+			
+			Iterator item = mapMarkerOptions.keySet().iterator();
+			
+			while (item.hasNext()) {
+				MarkerOptions mOptions = (MarkerOptions) mapMarkerOptions.get(item.next());
+				mMap.addMarker(mOptions);
+			}
+		}
+
+	}
+	
+	 
 
 	@Override
 	public void onMapReady(GoogleMap map) {
@@ -338,19 +392,17 @@ public class LocationActivity extends FragmentActivity implements
 		
 //        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(theHillsLatLng, PREFERRED_ZOOM_LEVEL));
 		
-//		mMyLocationMarker = mMap.addMarker(new MarkerOptions()
-//				.position(testLatLng)
-//				.title("Shang")
-//				.snippet("Shang's Home")
-//				.icon(BitmapDescriptorFactory
-//						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-		
+	
 		mTheHillsMarker = mMap.addMarker(new MarkerOptions()
 				.position(theHillsLatLng).title("The Hills")
 				.snippet("Welcome to The Hills")
 				.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)));
-
-		this.currentLocation();
+		
+		Log.d(TAG, "targetPlaceKeyword: " + targetPlaceKeyword + " targetPlaceType: " + targetPlaceType);
+		if ((targetPlaceKeyword!= null)&&(targetPlaceType != -1)) {
+			Log.d(TAG, "let me know custome search!");
+			createTargetMarkers();
+		}
 
 	}
 	
@@ -365,8 +417,20 @@ public class LocationActivity extends FragmentActivity implements
 	public boolean onMarkerClick(Marker marker) {
 		// TODO Auto-generated method stub
 		Log.d(TAG, "Marker got clicked");
-		destinationLatLng = marker.getPosition();
+		this.setDestinationForRouting(marker);
 		return false;
+	}
+	
+	private void setDestinationForRouting(Marker marker) {
+		marker.showInfoWindow();
+		destinationLatLng = marker.getPosition();
+	}
+	
+	private void setDestinationForRouting(MarkerOptions mOptions) {
+
+		Marker marker = mMap.addMarker(mOptions);
+		marker.showInfoWindow();
+		destinationLatLng = marker.getPosition();
 	}
 
 
@@ -397,10 +461,11 @@ public class LocationActivity extends FragmentActivity implements
 					Log.d(TAG, "0 button got clicked");
 					break;
 				case 1:
-			        Routing routing = new Routing(Routing.TravelMode.WALKING);
+			        Routing routing = new Routing(Routing.TravelMode.DRIVING);
 			        routing.registerListener(LocationActivity.this);
 			        
-					currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+			        Location currentLocation = ((Application)getApplication()).getCurrentLocation();
+					LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 			        routing.execute(currentLatLng, destinationLatLng);					
 			        break;
 				default:
@@ -440,6 +505,9 @@ public class LocationActivity extends FragmentActivity implements
 
 		// Start marker
 		MarkerOptions options = new MarkerOptions();
+		
+        Location currentLocation = ((Application)getApplication()).getCurrentLocation();
+		LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 		options.position(currentLatLng);
 		options.icon(BitmapDescriptorFactory
 				.fromResource(R.drawable.start_blue));
@@ -451,29 +519,4 @@ public class LocationActivity extends FragmentActivity implements
 		options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
 		mMap.addMarker(options);
 	}
-	
-	private LocationListener listener = new LocationListener() {
-
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-
-		}
-
-		@Override
-		public void onProviderEnabled(String provider) {
-
-		}
-
-		@Override
-		public void onProviderDisabled(String provider) {
-
-		}
-
-		@Override
-		public void onLocationChanged(Location location) {
-			Log.e(TAG, "location update : " + location);
-			currentLocation = location;
-			locationManager.removeUpdates(listener);
-		}
-	};
 }

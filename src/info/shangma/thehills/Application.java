@@ -1,9 +1,16 @@
 package info.shangma.thehills;
 
+import info.shangma.thehills.mapoutside.Place;
 import info.shangma.thehills.voice.util.ConnectToServerThread;
 import info.shangma.thehills.voice.util.ServerThread;
 
 import java.util.ArrayList;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import android.bluetooth.BluetoothAdapter;
@@ -12,10 +19,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -43,6 +55,20 @@ public class Application extends android.app.Application {
     //---thread for connecting to the client socket---
     public ConnectToServerThread connectToServerThread;
     
+    
+    //---device location info for the whole application
+	private LocationManager locationManager;
+	private Location currentLocation;
+	
+	private ArrayList<Place> foundPlaces;
+
+	public ArrayList<Place> getFoundPlaces() {
+		return foundPlaces;
+	}
+
+	public void setFoundPlaces(ArrayList<Place> foundPlaces) {
+		this.foundPlaces = foundPlaces;
+	}
 
 	public Application() {
 		// TODO Auto-generated constructor stub
@@ -52,10 +78,9 @@ public class Application extends android.app.Application {
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
-
-		/**
-		 * comment out Parse function, change to using bluetooth
-		 */
+		
+		// location
+		this.currentLocation();
 			
 		// bluetooth
 		discoveredDevices = new ArrayList<BluetoothDevice>();
@@ -64,6 +89,73 @@ public class Application extends android.app.Application {
         
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothAdapter.enable();
+	}
+	
+	private void currentLocation() {
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		String provider = locationManager
+				.getBestProvider(new Criteria(), false);
+
+		Location location = locationManager.getLastKnownLocation(provider);
+
+		if (location == null) {
+			locationManager.requestLocationUpdates(provider, 0, 0, listener);
+		} else {
+			currentLocation = location;			
+			/*
+			CameraPosition cameraPosition = new CameraPosition.Builder()
+										.target(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())) 
+										.zoom(14) // Sets the zoom
+										.tilt(30) // Sets the tilt of the camera to 30 degrees
+										.build(); // Creates a CameraPosition from the builder
+			
+			mMap.animateCamera(CameraUpdateFactory
+					.newCameraPosition(cameraPosition));
+			*/
+			
+			Log.e(TAG, "current location is : " + location);
+		}
+		
+		/*
+		currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+		
+		mCurrentLocationMarker = mMap.addMarker(new MarkerOptions()
+		.position(currentLatLng)
+		.title("Your Location")
+		.snippet("This is your current location")
+		.icon(BitmapDescriptorFactory.defaultMarker(mRandom.nextFloat() * 360)));
+		*/
+
+	}
+	
+	private LocationListener listener = new LocationListener() {
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+
+		}
+
+		@Override
+		public void onLocationChanged(Location location) {
+			Log.e(TAG, "location update : " + location);
+			currentLocation = location;
+			locationManager.removeUpdates(listener);
+		}
+	};
+	
+	public Location getCurrentLocation() {
+		return currentLocation;
 	}
 	
 	// bluetooth capability

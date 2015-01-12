@@ -42,7 +42,7 @@ public class PlacesService {
 			String placeSpacification, int type) {
 
 		String urlString = makeUrl(latitude, longitude, placeSpacification, type);
-		Log.d(TAG, urlString);
+		Log.e(TAG, urlString);
 
 		try {
 			String json = getJSON(urlString);
@@ -79,7 +79,7 @@ public class PlacesService {
 				urlString.append(Double.toString(latitude));
 				urlString.append(",");
 				urlString.append(Double.toString(longitude));
-				urlString.append("&radius=5000");
+				urlString.append("&radius=2000");
 				// urlString.append("&types="+place);
 				urlString.append("&key=" + API_KEY);
 			} else {
@@ -87,7 +87,7 @@ public class PlacesService {
 				urlString.append(Double.toString(latitude));
 				urlString.append(",");
 				urlString.append(Double.toString(longitude));
-				urlString.append("&radius=1000");
+				urlString.append("&radius=2000");
 				urlString.append("&types=" + place);
 				urlString.append("&key=" + API_KEY);
 			}
@@ -99,7 +99,7 @@ public class PlacesService {
 				urlString.append(Double.toString(latitude));
 				urlString.append(",");
 				urlString.append(Double.toString(longitude));
-				urlString.append("&radius=10000");
+				urlString.append("&radius=2000");
 				urlString.append("&name="+place);
 				urlString.append("&key=" + API_KEY);
 			}

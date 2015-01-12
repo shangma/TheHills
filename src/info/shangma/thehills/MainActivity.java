@@ -38,11 +38,11 @@ public class MainActivity extends Activity {
 		super.onPause();
 	}
 
-	public void onEventBtn(View view) {
-		Log.d(TAG, "event button clicked");
+	public void onInsideEventBtn(View view) {
+		Log.d(TAG, "inside event button clicked");
 	}
 
-	public void onLocationBtn(View view) {
+	public void onOutsideLocationBtn(View view) {
 		Intent intent = new Intent(this, SpeechRecognitionLauncher.class);
 		startActivity(intent);
 	}

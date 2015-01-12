@@ -24,23 +24,54 @@
             android:id="@+id/button_frame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" >
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
-            <Button
-                android:id="@+id/eventBtn"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:text="Event"
-                android:onClick="onEventBtn" />
+                android:orientation="horizontal" >
 
-            <Button
-                android:id="@+id/locationBtn"
-                android:layout_width="0dp"
+                <Button
+                    android:id="@+id/insideEventBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:onClick="onInsideEventBtn"
+                    android:text="Inside Events" />
+
+                <Button
+                    android:id="@+id/insideLocationBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:onClick="onInsideLocationBtn"
+                    android:text="Inside Location" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:text="Location"
-                android:onClick="onLocationBtn" />
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/outsideEventBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:onClick="onOutsideEventBtn"
+                    android:text="Outside Event" />
+
+                <Button
+                    android:id="@+id/outsideLocationBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:onClick="onOutsideLocationBtn"
+                    android:text="Outside Location" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

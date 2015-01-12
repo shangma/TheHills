@@ -6,6 +6,9 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  *  Model class for Places data.
  * 
@@ -91,5 +94,4 @@ public class Place {
     public String toString() {
         return "Place{" + "id=" + id + ", icon=" + icon + ", name=" + name + ", latitude=" + latitude + ", longitude=" + longitude + '}';
     }
-
 }
