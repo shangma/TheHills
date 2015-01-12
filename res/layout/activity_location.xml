@@ -2,94 +2,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" >
-
-    <!--  
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Inside" />
-
-        <CheckBox
-            android:id="@+id/checkbox_Inside"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left"
-            android:onClick=""
-            android:text="UnImplemented" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Outside" />
-
-        <CheckBox
-            android:id="@+id/checkbox_all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left"
-            android:onClick="onCheckboxAll"
-            android:text="All" />
-
-        <CheckBox
-            android:id="@+id/checkbox_atm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left"
-            android:onClick="onCheckboxATM"
-            android:text="ATM" />
-
-        <CheckBox
-            android:id="@+id/checkbox_bank"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left"
-            android:onClick="onCheckboxBank"
-            android:text="Bank" />
-
-        <CheckBox
-            android:id="@+id/checkbox_pharmacy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left"
-            android:onClick="onCheckboxPharmacy"
-            android:text="Pharmacy" />
-
-        <CheckBox
-            android:id="@+id/checkbox_cafe"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left"
-            android:onClick="onCheckboxcafe"
-            android:text="Cafe" />
-
-        <CheckBox
-            android:id="@+id/checkbox_restaurant"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left"
-            android:onClick="onCheckboxRestaurant"
-            android:text="Restaurant" />
-
-        <CheckBox
-            android:id="@+id/checkbox_shopping"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left"
-            android:onClick="onCheckboxShopping"
-            android:text="Shopping Mall" />
-    </LinearLayout>-->
     
     
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:background="@color/background_white"
         android:orientation="vertical" >
         
         <ListView

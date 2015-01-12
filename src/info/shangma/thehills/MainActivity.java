@@ -41,6 +41,14 @@ public class MainActivity extends Activity {
 	public void onInsideEventBtn(View view) {
 		Log.d(TAG, "inside event button clicked");
 	}
+	
+	public void onInsideLocationBtn(View view) {
+		Log.d(TAG, "inside location button clicked");
+	}
+	
+	public void onOutsideEventBtn(View view) {
+		Log.d(TAG, "outside event button clicked");
+	}
 
 	public void onOutsideLocationBtn(View view) {
 		Intent intent = new Intent(this, SpeechRecognitionLauncher.class);

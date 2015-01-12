@@ -93,15 +93,20 @@ public class PlaceCommand implements VoiceActionCommand
 				e.printStackTrace();
 			}
 			
-			Log.d(TAG, "finish keyword checking");
-
-			
 			if (targetKeyword != null) {
 				
-		        Location currentLocation = ((Application)this.mContext.getApplicationContext()).getCurrentLocation();				
+		        Location currentLocation = ((Application)this.mContext.getApplicationContext()).getCurrentLocation();
+		        
+				String firstRevised = targetKeyword.toLowerCase().replace(" ", "+");
+				StringBuilder secondRevised = new StringBuilder();
+				secondRevised.append("\"").append(firstRevised).append("\"");
+				final String finalString = secondRevised.toString();
+				
+				Log.d(TAG, "final search keyword: " + finalString);
+				
 
 				try {
-					placeTask = new GetPlace(this.mContext, targetKeyword, LocationActivity.PLACE_WITH_KEYWORD_SEARCH, currentLocation);
+					placeTask = new GetPlace(this.mContext, finalString, LocationActivity.PLACE_WITH_KEYWORD_SEARCH, currentLocation);
 					placeTask.execute();
 					placeTask.get();
 				} catch (InterruptedException e) {
@@ -117,13 +122,6 @@ public class PlaceCommand implements VoiceActionCommand
 					understood = true;
 					
 					((Application)this.mContext.getApplicationContext()).setFoundPlaces(placeTask.getFoundPlaces());
-					
-					String firstRevised = targetKeyword.toLowerCase().replace(" ", "+");
-					StringBuilder secondRevised = new StringBuilder();
-					secondRevised.append("\"").append(firstRevised).append("\"");
-					final String finalString = secondRevised.toString();
-					
-					Log.d(TAG, "final search keyword: " + finalString);
 					
 					Timer timer_1 = new Timer();
 
