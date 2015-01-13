@@ -22,6 +22,7 @@ import root.gast.speech.voiceaction.VoiceActionCommand;
 import root.gast.speech.voiceaction.VoiceActionExecutor;
 import root.gast.speech.voiceaction.WhyNotUnderstoodListener;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
@@ -57,7 +58,7 @@ public class SpeechRecognitionLauncher extends
 				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
 				| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		setContentView(R.layout.launcher_voice_recognition);
  	
 		if (executor == null) {

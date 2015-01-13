@@ -99,7 +99,8 @@ public class PlacesService {
 				urlString.append(Double.toString(latitude));
 				urlString.append(",");
 				urlString.append(Double.toString(longitude));
-				urlString.append("&radius=2000");
+//				urlString.append("&radius=2000");
+				urlString.append("&rankby=distance");
 				urlString.append("&keyword="+place);
 				urlString.append("&key=" + API_KEY);
 			}

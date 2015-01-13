@@ -45,6 +45,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -52,6 +53,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -70,7 +73,7 @@ import android.widget.ViewSwitcher;
 public class LocationActivity extends FragmentActivity implements 
 							OnMapReadyCallback, OnCameraChangeListener,
 							OnMarkerClickListener, OnMyLocationButtonClickListener,
-							OnInfoWindowClickListener,
+							OnInfoWindowClickListener, OnInitListener,
 							RoutingListener {
 	
 	private final static String TAG = "LocationActivity";
@@ -120,7 +123,13 @@ public class LocationActivity extends FragmentActivity implements
     private CheckBox checkBoxShopping;
     
     private ListView listPlace;
+    
+    private List<String> instructions;
     private ListView listInstructions;
+    private TextToSpeech mTTS;			// to read the instructions
+    private boolean readyToSay = false;
+    private String firstToSay;
+    
     private ViewSwitcher viewSwitcher;
     private  Animation slide_in_left, slide_out_right;
     
@@ -150,12 +159,16 @@ public class LocationActivity extends FragmentActivity implements
 				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
 				| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		
 		setContentView(R.layout.activity_location);
 				
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mapFragment.getMapAsync(this);
+		
+		mTTS = new TextToSpeech(this, this);
+
 
 		/*
 		checkBoxAll = (CheckBox) findViewById(R.id.checkbox_all);
@@ -192,7 +205,22 @@ public class LocationActivity extends FragmentActivity implements
 			listPlace.setAdapter(adapter);
 			
 		}
-	
+		
+		String keywordSearched = ((Application)this.getApplicationContext()).getKeywordSearched();
+		String nearestStringPrompt = this.getResources().getString(R.string.say_the_nearest_options);
+		String nearestKeyword = String.format(nearestStringPrompt, keywordSearched);
+		
+		StringBuilder toSay = new StringBuilder();
+		
+		toSay.append(nearestKeyword);
+		toSay.append(foundPlaces.get(0).getName());
+		toSay.append(" at ");
+		toSay.append(foundPlaces.get(0).getVicinity());
+		firstToSay = toSay.toString();
+		
+		Log.d(TAG, "firstToSay is: " + firstToSay);
+
+		
 	}
 	
 	
@@ -443,15 +471,21 @@ public class LocationActivity extends FragmentActivity implements
 	private void setDestinationForRouting(Marker marker) {
 		marker.showInfoWindow();
 		destinationLatLng = marker.getPosition();
+		
+		CameraPosition cameraPosition = new CameraPosition.Builder()
+				.target(new LatLng(destinationLatLng.latitude, destinationLatLng.longitude)) // Sets the center of the map to the des
+				.zoom(14) // Sets the zoom
+				.tilt(30) // Sets the tilt of the camera to 30 degrees
+				.build(); // Creates a CameraPosition from the builder
+		mMap.animateCamera(CameraUpdateFactory
+				.newCameraPosition(cameraPosition));
 	}
 	
 	private void setDestinationForRouting(MarkerOptions mOptions) {
 
 		Marker marker = mMap.addMarker(mOptions);
-		marker.showInfoWindow();
-		destinationLatLng = marker.getPosition();
+		setDestinationForRouting(marker);
 	}
-
 
 	@Override
 	public boolean onMyLocationButtonClick() {
@@ -470,7 +504,7 @@ public class LocationActivity extends FragmentActivity implements
 		new AlertDialog.Builder(this)
 		.setTitle(marker.getTitle())
 		.setCancelable(true)
-		.setItems(new CharSequence[] {"More info","Go to here"}, new DialogInterface.OnClickListener() {
+		.setItems(new CharSequence[] {"More info","Go to here", "Voice Navigation to here"}, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -487,6 +521,9 @@ public class LocationActivity extends FragmentActivity implements
 					LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 			        routing.execute(currentLatLng, destinationLatLng);					
 			        break;
+				case 2:
+					
+					break;
 				default:
 					break;
 				}
@@ -538,12 +575,15 @@ public class LocationActivity extends FragmentActivity implements
 		options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
 		mMap.addMarker(options);
 		
-		List<String> instructions = new ArrayList<String>();
+		instructions = new ArrayList<String>();
 		
 		Log.d(TAG, "Number of the segment " + route.getNumOfSeg());
+		
+		int i = 1;
 		for (Segment aSegment : route.getSegments()) {
 			Log.d(TAG, aSegment.getInstruction());
-			instructions.add(aSegment.getInstruction());
+			instructions.add("Step " + i + " " + aSegment.getInstruction());
+			i++;
 		}
 		
 		Log.d(TAG, "the size of instructions: " + instructions.size());
@@ -556,5 +596,30 @@ public class LocationActivity extends FragmentActivity implements
 	
 	public void onBackToPlaceBtn(View view) {
 		viewSwitcher.showPrevious();
+		
+		if (mTTS.isSpeaking()) {
+			mTTS.stop();
+		}
+	}
+	
+	public void onVoiceInstructionBtn(View view) {
+		this.readCurrentInstructions();
+	}
+	
+	private void readCurrentInstructions() {
+		if ((instructions != null)&& readyToSay) {
+			Log.d(TAG, "I am ready to read it!");
+			for (String speech : instructions) {
+				mTTS.speak(speech, TextToSpeech.QUEUE_ADD, null);
+			}
+		}
+	}
+
+	@Override
+	public void onInit(int status) {
+		// TODO Auto-generated method stub
+		this.readyToSay = true;
+		mTTS.setSpeechRate(0.8f);
+		mTTS.speak(firstToSay, TextToSpeech.QUEUE_FLUSH, null);
 	}
 }

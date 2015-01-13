@@ -7,6 +7,7 @@ import info.shangma.thehills.map.outside.LocationActivity;
 import info.shangma.thehills.voice.SpeechRecognitionLauncher;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +30,7 @@ public class MainActivity extends Activity {
 				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
 				| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		setContentView(R.layout.activity_main);
 	}
 

@@ -17,6 +17,8 @@
     <string name="speech_launcher_prompt">What can I get you today?</string>
     <string name="unclear_recognition_prompt">I can not hear you clearly. Can you say it again? </string>
     
+    <string name="say_the_nearest_options">The nearest %1$s is</string>
+    
     
     <string name="responseForCancellation">Confirmed.</string>
     <array name="cancelCommand">

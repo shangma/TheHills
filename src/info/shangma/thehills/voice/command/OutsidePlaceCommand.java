@@ -122,6 +122,7 @@ public class OutsidePlaceCommand implements VoiceActionCommand
 					understood = true;
 					
 					((Application)this.mContext.getApplicationContext()).setFoundPlaces(placeTask.getFoundPlaces());
+					((Application)this.mContext.getApplicationContext()).setKeywordSearched(finalString);
 					
 					Timer timer_1 = new Timer();
 

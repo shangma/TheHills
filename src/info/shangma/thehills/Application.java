@@ -61,6 +61,15 @@ public class Application extends android.app.Application {
 	private Location currentLocation;
 	
 	private ArrayList<Place> foundPlaces;
+	private String keywordSearched;
+
+	public String getKeywordSearched() {
+		return keywordSearched;
+	}
+
+	public void setKeywordSearched(String keywordSearched) {
+		this.keywordSearched = keywordSearched;
+	}
 
 	public ArrayList<Place> getFoundPlaces() {
 		return foundPlaces;
