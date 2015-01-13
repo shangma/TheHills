@@ -5,6 +5,7 @@ import info.shangma.thehills.R;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -14,11 +15,13 @@ import java.util.concurrent.ExecutionException;
 import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.directions.route.Segment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.drive.internal.am;
+import com.google.android.gms.drive.internal.as;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,10 +59,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 public class LocationActivity extends FragmentActivity implements 
 							OnMapReadyCallback, OnCameraChangeListener,
@@ -114,6 +120,10 @@ public class LocationActivity extends FragmentActivity implements
     private CheckBox checkBoxShopping;
     
     private ListView listPlace;
+    private ListView listInstructions;
+    private ViewSwitcher viewSwitcher;
+    private  Animation slide_in_left, slide_out_right;
+    
     private Map<String, MarkerOptions> mapMarkerOptions;
     
     // for routing
@@ -168,8 +178,17 @@ public class LocationActivity extends FragmentActivity implements
 			Log.d(TAG, "listview ready");
 			foundPlaces = ((Application)this.getApplicationContext()).getFoundPlaces();
 			PlaceListAdpater adapter = new PlaceListAdpater(foundPlaces);
-			
+
+			viewSwitcher = (ViewSwitcher) findViewById(R.id.viewswitcher);
+			slide_in_left = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
+			slide_out_right = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
+
+			viewSwitcher.setInAnimation(slide_in_left);
+			viewSwitcher.setOutAnimation(slide_out_right);
+
 			listPlace = (ListView) findViewById(R.id.list_place);
+			listInstructions = (ListView) findViewById(R.id.list_instructions);
+			
 			listPlace.setAdapter(adapter);
 			
 		}
@@ -518,5 +537,24 @@ public class LocationActivity extends FragmentActivity implements
 		options.position(destinationLatLng);
 		options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
 		mMap.addMarker(options);
+		
+		List<String> instructions = new ArrayList<String>();
+		
+		Log.d(TAG, "Number of the segment " + route.getNumOfSeg());
+		for (Segment aSegment : route.getSegments()) {
+			Log.d(TAG, aSegment.getInstruction());
+			instructions.add(aSegment.getInstruction());
+		}
+		
+		Log.d(TAG, "the size of instructions: " + instructions.size());
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, instructions);
+		listInstructions.setAdapter(adapter);
+		
+		viewSwitcher.showNext();
+	}
+	
+	public void onBackToPlaceBtn(View view) {
+		viewSwitcher.showPrevious();
 	}
 }
