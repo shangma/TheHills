@@ -46,5 +46,7 @@
         <item>emerald lounge</item>
         <item>first floor</item>
     </array>
+    
+	<string name="acknowledgement">This experimental service is provided by\n the Institute for Semantic Computing(UCI | UCLA)</string>
 
 </resources>

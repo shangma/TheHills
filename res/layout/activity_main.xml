@@ -12,59 +12,74 @@
         android:orientation="vertical" >
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
+            android:layout_marginBottom="120dp"
             android:gravity="center"
             android:text="I can help you to locate things!"
             android:textColor="@color/background_white"
             android:textSize="80sp" />
 
-        <LinearLayout
-            android:id="@+id/button_frame"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical" >
+            android:gravity="center"
+            android:text="Click it or Say it"
+            android:textColor="#FF0066"
+            android:textSize="40sp"
+            android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal" >
 
-                <Button
-                    android:id="@+id/insideEventBtn"
-                    style="@style/buttoninmain"
-                    android:onClick="onInsideEventBtn"
-                    android:text="Inside Events"/>
+            <Button
+                android:id="@+id/insideEventBtn"
+                style="@style/buttoninmain"
+                android:onClick="onInsideEventBtn"
+                android:text="Inside Events" />
 
-                <Button
-                    android:id="@+id/insideLocationBtn"
-                    style="@style/buttoninmain"
-                    android:onClick="onInsideLocationBtn"
-                    android:text="Inside Location" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal" >
-
-                <Button
-                    android:id="@+id/outsideEventBtn"
-                    style="@style/buttoninmain"
-                    android:onClick="onOutsideEventBtn"
-                    android:text="Outside Events"/>
-
-                <Button
-                    android:id="@+id/outsideLocationBtn"
-                    style="@style/buttoninmain"
-                    android:onClick="onOutsideLocationBtn"
-                    android:text="Outside Location"/>
-            </LinearLayout>
+            <Button
+                android:id="@+id/insideLocationBtn"
+                style="@style/buttoninmain"
+                android:onClick="onInsideLocationBtn"
+                android:text="Inside Location" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/outsideEventBtn"
+                style="@style/buttoninmain"
+                android:onClick="onOutsideEventBtn"
+                android:text="Outside Events" />
+
+            <Button
+                android:id="@+id/outsideLocationBtn"
+                style="@style/buttoninmain"
+                android:onClick="onOutsideLocationBtn"
+                android:text="Outside Location" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="120dp"
+            android:clickable="false"
+            android:gravity="center"
+            android:text="@string/acknowledgement"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <ListView
