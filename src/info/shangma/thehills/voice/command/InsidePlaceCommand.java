@@ -1,9 +1,11 @@
 package info.shangma.thehills.voice.command;
 
 import info.shangma.thehills.AcknowledgementPresentActivity;
+import info.shangma.thehills.Application;
 import info.shangma.thehills.R;
 import info.shangma.thehills.map.inside.InsideDirectionActivity;
 import info.shangma.thehills.voice.SpeechRecognitionLauncher;
+import info.shangma.thehills.voice.util.CommonUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,6 +56,7 @@ public class InsidePlaceCommand implements VoiceActionCommand
             
             if (which != WordMatcher.NOT_IN) {
             	understood = true;
+            	((Application)this.mContext.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
             	
                 String matchedString = heard.toString().toLowerCase();
                 Log.d(TAG, "found string: " + matchedString);

@@ -6,6 +6,7 @@ import info.shangma.thehills.R;
 import info.shangma.thehills.map.outside.GetPlace;
 import info.shangma.thehills.map.outside.LocationActivity;
 import info.shangma.thehills.voice.SpeechRecognitionLauncher;
+import info.shangma.thehills.voice.util.CommonUtil;
 import info.shangma.utils.string.Inflector;
 
 import java.io.IOException;
@@ -120,6 +121,9 @@ public class OutsidePlaceCommand implements VoiceActionCommand
 				if (placeTask.findAnyPlaces()) {
 					executor.speak(placePrompt);
 					understood = true;
+					
+					((Application)this.mContext.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
+
 					
 					((Application)this.mContext.getApplicationContext()).setFoundPlaces(placeTask.getFoundPlaces());
 					((Application)this.mContext.getApplicationContext()).setKeywordSearched(finalString);
