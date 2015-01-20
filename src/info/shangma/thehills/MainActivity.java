@@ -40,8 +40,6 @@ public class MainActivity extends Activity implements OnInitListener {
 	
 	public static RoboMe roboMe;
 	
-	private Switch serviceSwitch;
-	private Switch bleSwitch;
 	private TextToSpeech mTTS;
 
 	
@@ -56,36 +54,6 @@ public class MainActivity extends Activity implements OnInitListener {
 				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		setContentView(R.layout.activity_main);
-		serviceSwitch = (Switch) findViewById(R.id.serviceSwitch);
-		bleSwitch = (Switch) findViewById(R.id.bleSwitch);
-		
-		serviceSwitch.setOncheckListener(new OnCheckListener() {
-			
-			@Override
-			public void onCheck(boolean isChecked) {
-				// TODO Auto-generated method stub
-				if (isChecked) {
-	                Intent i = DetectionService.makeStartServiceIntent(MainActivity.this);
-	                MainActivity.this.startService(i);
-				} else {
-					Intent i = DetectionService.makeStopServiceIntent(MainActivity.this);
-	                MainActivity.this.stopService(i);
-				}
-			}
-		});
-		
-		bleSwitch.setOncheckListener(new OnCheckListener() {
-			
-			@Override
-			public void onCheck(boolean isChecked) {
-				// TODO Auto-generated method stub
-				if (isChecked) {
-					((Application)MainActivity.this.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
-				} else {
-					((Application)MainActivity.this.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
-				}
-			}
-		});
 		
 		mTTS = new TextToSpeech(this, this);
 		

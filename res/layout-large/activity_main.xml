@@ -85,20 +85,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
-
-        <com.gc.materialdesign.views.Switch
-            android:id="@+id/serviceSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:background="#1E88E5" />
-
-        <com.gc.materialdesign.views.Switch
-            android:id="@+id/bleSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:background="#888888" />
     </LinearLayout>
 
     <ListView
