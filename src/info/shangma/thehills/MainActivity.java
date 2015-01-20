@@ -41,6 +41,7 @@ public class MainActivity extends Activity implements OnInitListener {
 	public static RoboMe roboMe;
 	
 	private Switch serviceSwitch;
+	private Switch bleSwitch;
 	private TextToSpeech mTTS;
 
 	
@@ -56,6 +57,7 @@ public class MainActivity extends Activity implements OnInitListener {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		setContentView(R.layout.activity_main);
 		serviceSwitch = (Switch) findViewById(R.id.serviceSwitch);
+		bleSwitch = (Switch) findViewById(R.id.bleSwitch);
 		
 		serviceSwitch.setOncheckListener(new OnCheckListener() {
 			
@@ -67,7 +69,20 @@ public class MainActivity extends Activity implements OnInitListener {
 	                MainActivity.this.startService(i);
 				} else {
 					Intent i = DetectionService.makeStopServiceIntent(MainActivity.this);
-	                MainActivity.this.startService(i);
+	                MainActivity.this.stopService(i);
+				}
+			}
+		});
+		
+		bleSwitch.setOncheckListener(new OnCheckListener() {
+			
+			@Override
+			public void onCheck(boolean isChecked) {
+				// TODO Auto-generated method stub
+				if (isChecked) {
+					((Application)MainActivity.this.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
+				} else {
+					((Application)MainActivity.this.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
 				}
 			}
 		});
@@ -88,6 +103,14 @@ public class MainActivity extends Activity implements OnInitListener {
 	
 
 	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+        Intent i = DetectionService.makeStartServiceIntent(MainActivity.this);
+        MainActivity.this.startService(i);
+	}
+
+	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
@@ -95,6 +118,9 @@ public class MainActivity extends Activity implements OnInitListener {
 			mTTS.stop();
 			mTTS.shutdown();
 		}
+		
+		Intent i = DetectionService.makeStopServiceIntent(MainActivity.this);
+        MainActivity.this.stopService(i);
 	}
 
 	public void onInsideEventBtn(View view) {

@@ -124,7 +124,6 @@ public class OutsidePlaceCommand implements VoiceActionCommand
 					
 					((Application)this.mContext.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
 
-					
 					((Application)this.mContext.getApplicationContext()).setFoundPlaces(placeTask.getFoundPlaces());
 					((Application)this.mContext.getApplicationContext()).setKeywordSearched(finalString);
 					

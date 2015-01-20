@@ -6,6 +6,7 @@ import info.shangma.thehills.R;
 import info.shangma.thehills.voice.command.CancelCommand;
 import info.shangma.thehills.voice.command.InsidePlaceCommand;
 import info.shangma.thehills.voice.command.OutsidePlaceCommand;
+import info.shangma.thehills.voice.command.StartCommand;
 import info.shangma.thehills.voice.util.SoundPoolPlayerEx;
 
 import java.util.Arrays;
@@ -35,6 +36,7 @@ public class SpeechRecognitionLauncher extends
 	public static final String TYPE_OF_LOCATION_OR_EVENT = "info.shangma.thehills.locationAndevent";
 	
 	public static final int INVALID_TYPE = -1;
+	public static final int START_EVENT = 0;
 	public static final int INSIDE_EVENT = 1;
 	public static final int INSIDE_LOCATION = 2;
 	public static final int OUTSIDE_EVENT = 3;
@@ -72,6 +74,9 @@ public class SpeechRecognitionLauncher extends
 		
 		if (voiceActionType == this.INVALID_TYPE) {
 			Log.d(TAG, "input is invalid");
+		} else if (voiceActionType == this.START_EVENT) {
+			Log.d(TAG, "input is for start");
+			hotleVoiceAction = startVoiceAction();
 		} else if (voiceActionType ==  this.OUTSIDE_LOCATION) {
 			Log.d(TAG, "input is for outside location");
 			hotleVoiceAction = outsidePlaceVoiceAction();
@@ -98,6 +103,22 @@ public class SpeechRecognitionLauncher extends
 		executor.execute(hotleVoiceAction);
 	}
 	
+	private VoiceAction startVoiceAction() {
+		
+		VoiceActionCommand cancelCommand = new CancelCommand(this, executor);
+		VoiceActionCommand startCommand = new StartCommand(this, executor);
+		
+		VoiceAction voiceAction = new MultiCommandVoiceAction(Arrays.asList(cancelCommand, startCommand));
+		voiceAction.setNotUnderstood(new WhyNotUnderstoodListener(this, executor, false));
+		
+		String LOOKUP_PROMPT = getResources().getString(R.string.speech_launcher_prompt);
+		voiceAction.setPrompt(LOOKUP_PROMPT);
+		voiceAction.setSpokenPrompt(LOOKUP_PROMPT);
+		
+		voiceAction.setActionType(AbstractVoiceAction.FirstVoiceActionOutofTwo);
+		
+		return voiceAction;
+	}
 	private VoiceAction insidePlaceVoiceAction() {
 		Log.d(TAG, "insideLocationVoiceAction");
 		boolean relaxed = false;

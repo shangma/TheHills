@@ -45,8 +45,7 @@ public class ConnectToServerThread extends Thread {
             bluetoothSocket.connect();
             
             //---create a thread for the communication channel---
-            commsThread = new CommsThread(
-                bluetoothSocket);  
+            commsThread = new CommsThread(bluetoothSocket);  
             commsThread.start();
         } catch (IOException connectException) {
             //---unable to connect; close the socket and get out---

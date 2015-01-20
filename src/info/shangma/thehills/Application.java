@@ -277,7 +277,7 @@ public class Application extends android.app.Application {
 			try {
 				Application.this.connectToServerThread.commsThread.write(args[0]);
 	        } catch (Exception e) {
-	        	Log.d(TAG, e.getLocalizedMessage());
+//	        	Log.d(TAG, e.getLocalizedMessage());
 	        }
 			return null;
 		}

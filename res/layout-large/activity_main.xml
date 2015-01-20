@@ -41,7 +41,7 @@
                 android:id="@+id/insideEventBtn"
                 style="@style/buttoninmain"
                 android:onClick="onInsideEventBtn"
-                android:text="Inside Events" />
+                android:text="Inside Event" />
 
             <Button
                 android:id="@+id/insideLocationBtn"
@@ -60,7 +60,7 @@
                 android:id="@+id/outsideEventBtn"
                 style="@style/buttoninmain"
                 android:onClick="onOutsideEventBtn"
-                android:text="Outside Events" />
+                android:text="Outside Event" />
 
             <Button
                 android:id="@+id/outsideLocationBtn"
@@ -92,6 +92,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:background="#1E88E5" />
+
+        <com.gc.materialdesign.views.Switch
+            android:id="@+id/bleSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:background="#888888" />
     </LinearLayout>
 
     <ListView

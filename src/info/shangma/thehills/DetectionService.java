@@ -1,10 +1,13 @@
 package info.shangma.thehills;
 
+
+import info.shangma.thehills.event.WebViewActivity;
+import info.shangma.thehills.voice.SpeechRecognitionLauncher;
+
 import java.util.List;
 
 import root.gast.speech.SpeechRecognitionUtil;
 import root.gast.speech.text.WordList;
-import root.gast.speech.text.match.SoundsLikeWordMatcher;
 import root.gast.speech.text.match.WordMatcher;
 
 import android.app.Service;
@@ -31,6 +34,8 @@ public class DetectionService extends Service implements RecognitionListener {
 	private SpeechRecognizer recognizer;
 
 	private WordMatcher matcher;
+	private final static int MAX_LENGTH_FOR_KEYWORD = 3;
+	private String matchedString;
 
 	@Override
 	public void onCreate() {
@@ -38,7 +43,7 @@ public class DetectionService extends Service implements RecognitionListener {
 		super.onCreate();
 		isStarted = false;
 
-		this.matcher = new WordMatcher(getResources().getStringArray(R.array.oneOutOfFour));
+		this.matcher = new WordMatcher(this.getResources().getStringArray(R.array.startCommand));;
 
 		if (recognizer == null) {
 			recognizer = SpeechRecognizer
@@ -46,7 +51,16 @@ public class DetectionService extends Service implements RecognitionListener {
 		}
 	}
 	
-    public static Intent makeStartServiceIntent(Context context)
+	
+    @Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		Log.d(TAG, "The service is destroyed");
+	}
+
+
+	public static Intent makeStartServiceIntent(Context context)
     {
         Intent i = new Intent(context, DetectionService.class);
         return i;
@@ -73,9 +87,9 @@ public class DetectionService extends Service implements RecognitionListener {
 
 				if (isStarted) {
 					Log.i(TAG, "Service already started");
-				} else {
-					startDetection();
 				}
+				startDetection();
+
 			}
 		}
 		return START_REDELIVER_INTENT;
@@ -153,7 +167,7 @@ public class DetectionService extends Service implements RecognitionListener {
 	public void onPartialResults(Bundle partialResults) {
 		// TODO Auto-generated method stub
 		Log.d(TAG, "partial results");
-		receiveResults(partialResults);
+//		receiveResults(partialResults);
 	}
 
 	@Override
@@ -173,36 +187,56 @@ public class DetectionService extends Service implements RecognitionListener {
 	@Override
 	public void onRmsChanged(float rmsdB) {
 		// TODO Auto-generated method stub
-		Log.d(TAG, "onRmsChanged");
+//		Log.d(TAG, "Rms Changed");
 	}
 
 	private void receiveResults(Bundle results) {
-		Log.d(TAG, "receive results");
-		
+
 		if ((results != null)
 				&& results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION)) {
 			List<String> heard = results
 					.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 			float[] scores = results
 					.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
-			receiveWhatWasHeard(heard, scores);
+			
+			Log.d(TAG, "the size is: " + heard.size());
+			for (int i = 0; i < heard.size(); i++) {
+				Log.d(TAG, heard.get(i) + " ");
+			}
+			
+			if (heard.size() != 0) {
+				receiveWhatWasHeard(heard, scores);
+			}
 		} else {
 			Log.d(TAG, "no results");
 		}
 	}
 
 	private void receiveWhatWasHeard(List<String> heard, float[] scores) {
-		Log.d(TAG, "receiveWhatWasHeard");
-
 		boolean heardTargetWord = false;
+		
+		
 		// find the target word
 		for (String possible : heard) {
+//            Log.d(TAG, "echo source: " + possible);
+
 			WordList wordList = new WordList(possible);
-			if (matcher.isIn(wordList.getWords())) {
-				Log.d(TAG, "HEARD IT!");
-				heardTargetWord = true;
-				break;
-			}
+			
+	        int which = WordMatcher.NOT_IN;
+	        
+	        if (wordList.getNumberOfWord() < MAX_LENGTH_FOR_KEYWORD) {
+	            
+	            which = matcher.isInAt(wordList.toString().toLowerCase());
+	            
+	            if (which != WordMatcher.NOT_IN) {
+	            	heardTargetWord = true;
+	            	
+	                matchedString = wordList.toString().toLowerCase();
+	                Log.d(TAG, "found string: " + matchedString);
+	                break;
+	                
+	           }
+	        }
 		}
 
 		if (heardTargetWord) {
@@ -225,8 +259,6 @@ public class DetectionService extends Service implements RecognitionListener {
 	}
 
 	private void activated(boolean success) {
-		Log.d(TAG, "activated");
-
 		stop();
 
 		// broadcast result
@@ -236,13 +268,33 @@ public class DetectionService extends Service implements RecognitionListener {
 		
 		
 		// start the launch directly
-//        Intent i = new Intent(this, SpeechRecognitionLauncher.class);
-//        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        this.startActivity(i);
+        Intent intent = new Intent();
+        
+        if (matchedString.equals("inside event")) {
+    		intent.setClass(this, WebViewActivity.class);
+    		intent.putExtra(WebViewActivity.DISPLAY_THIS_URL, "http://128.195.204.85/robot/hotelmanage.jsp");
+			
+		} else if (matchedString.equals("inside location")) {
+			
+			intent.setClass(this, SpeechRecognitionLauncher.class);
+			intent.putExtra(SpeechRecognitionLauncher.TYPE_OF_LOCATION_OR_EVENT, SpeechRecognitionLauncher.INSIDE_LOCATION);
+			
+		} else if (matchedString.equals("outside event")) {
+			intent.setClass(this, WebViewActivity.class);
+			intent.putExtra(WebViewActivity.DISPLAY_THIS_URL, "http://www.meetup.com/cities/us/ca/laguna_hills/");
+			
+		} else if (matchedString.equals("outside location")) {
+			intent.setClass(this, SpeechRecognitionLauncher.class);
+			intent.putExtra(SpeechRecognitionLauncher.TYPE_OF_LOCATION_OR_EVENT, SpeechRecognitionLauncher.OUTSIDE_LOCATION);
+		}
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.startActivity(intent);
 
 		Log.i(TAG, "found it");
 		// always stop after receive an activation
-		stopSelf();
+//		stopSelf();
+//		startDetection();
+		
 
 	}
 }
