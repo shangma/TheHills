@@ -70,6 +70,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+/**
+ * @author Shang Ma
+ *
+ * www.shangma.info
+ */
+
 public class LocationActivity extends FragmentActivity implements 
 							OnMapReadyCallback, OnCameraChangeListener,
 							OnMarkerClickListener, OnMyLocationButtonClickListener,

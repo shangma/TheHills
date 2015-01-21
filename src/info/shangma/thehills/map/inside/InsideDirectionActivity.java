@@ -1,9 +1,16 @@
 package info.shangma.thehills.map.inside;
+
 import info.shangma.thehills.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+
+/**
+ * @author Shang Ma
+ *
+ * www.shangma.info
+ */
 
 public class InsideDirectionActivity extends Activity {
 	

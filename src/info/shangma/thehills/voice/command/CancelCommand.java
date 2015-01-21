@@ -1,5 +1,9 @@
 package info.shangma.thehills.voice.command;
 
+import info.shangma.speech.text.WordList;
+import info.shangma.speech.text.match.WordMatcher;
+import info.shangma.speech.voiceaction.VoiceActionCommand;
+import info.shangma.speech.voiceaction.VoiceActionExecutor;
 import info.shangma.thehills.AcknowledgementPresentActivity;
 import info.shangma.thehills.R;
 import info.shangma.thehills.voice.SpeechRecognitionLauncher;
@@ -7,18 +11,16 @@ import info.shangma.thehills.voice.SpeechRecognitionLauncher;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import root.gast.speech.text.WordList;
-import root.gast.speech.text.match.WordMatcher;
-import root.gast.speech.voiceaction.VoiceActionCommand;
-import root.gast.speech.voiceaction.VoiceActionExecutor;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 /**
- * @author Greg Milette &#60;<a href="mailto:gregorym@gmail.com">gregorym@gmail.com</a>&#62;
+ * @author Shang Ma
  *
+ * www.shangma.info
  */
+
 public class CancelCommand implements VoiceActionCommand
 {
 	private final static String TAG = "CancelCommand";

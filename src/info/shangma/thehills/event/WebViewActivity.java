@@ -7,6 +7,12 @@ import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+/**
+ * @author Shang Ma
+ *
+ * www.shangma.info
+ */
+
 public class WebViewActivity extends Activity {
 	
 	private static final String TAG = "WebViewActivity";

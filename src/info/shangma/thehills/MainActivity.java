@@ -31,6 +31,12 @@ import android.widget.CompoundButton;
 import com.gc.materialdesign.views.Switch;
 import com.gc.materialdesign.views.Switch.OnCheckListener;
 
+/**
+ * @author Shang Ma
+ *
+ * www.shangma.info
+ */
+
 public class MainActivity extends Activity implements OnInitListener {
 	
 	private final static String TAG = "MainActivity";
@@ -66,6 +72,9 @@ public class MainActivity extends Activity implements OnInitListener {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+		
+		Intent i = DetectionService.makeStopServiceIntent(MainActivity.this);
+        MainActivity.this.stopService(i);
 	}
 	
 	

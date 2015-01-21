@@ -2,6 +2,12 @@ package info.shangma.thehills.voice.util;
 
 import java.util.Random;
 
+/**
+ * @author Shang Ma
+ *
+ * www.shangma.info
+ */
+
 public class CommonUtil {
 	
 	public static int randInt(int min, int max) {

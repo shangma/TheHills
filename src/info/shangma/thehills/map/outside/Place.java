@@ -10,12 +10,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- *  Model class for Places data.
- * 
- * @author Karn Shah
- * @Date   10/3/2013
+ * @author Shang Ma
  *
+ * www.shangma.info
  */
+
 public class Place {
     private String id;
     private String icon;

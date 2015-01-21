@@ -1,9 +1,15 @@
 package info.shangma.thehills.voice.util;
 
+import info.shangma.audio.util.SoundPoolPlayer;
 import info.shangma.thehills.R;
 import android.content.Context;
 import android.util.Log;
-import root.gast.audio.util.SoundPoolPlayer;
+
+/**
+ * @author Shang Ma
+ *
+ * www.shangma.info
+ */
 
 public class SoundPoolPlayerEx extends SoundPoolPlayer{
 	

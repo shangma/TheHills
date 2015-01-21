@@ -1,6 +1,13 @@
 package info.shangma.thehills.voice;
 
-
+import info.shangma.speech.SpeechRecognizingAndSpeakingActivity;
+import info.shangma.speech.tts.TextToSpeechUtils;
+import info.shangma.speech.voiceaction.AbstractVoiceAction;
+import info.shangma.speech.voiceaction.MultiCommandVoiceAction;
+import info.shangma.speech.voiceaction.VoiceAction;
+import info.shangma.speech.voiceaction.VoiceActionCommand;
+import info.shangma.speech.voiceaction.VoiceActionExecutor;
+import info.shangma.speech.voiceaction.WhyNotUnderstoodListener;
 import info.shangma.thehills.AcknowledgementPresentActivity;
 import info.shangma.thehills.R;
 import info.shangma.thehills.voice.command.CancelCommand;
@@ -14,14 +21,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import root.gast.speech.SpeechRecognizingAndSpeakingActivity;
-import root.gast.speech.tts.TextToSpeechUtils;
-import root.gast.speech.voiceaction.AbstractVoiceAction;
-import root.gast.speech.voiceaction.MultiCommandVoiceAction;
-import root.gast.speech.voiceaction.VoiceAction;
-import root.gast.speech.voiceaction.VoiceActionCommand;
-import root.gast.speech.voiceaction.VoiceActionExecutor;
-import root.gast.speech.voiceaction.WhyNotUnderstoodListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -30,8 +29,13 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.WindowManager;
 
-public class SpeechRecognitionLauncher extends
-		SpeechRecognizingAndSpeakingActivity {
+/**
+ * @author Shang Ma
+ *
+ * www.shangma.info
+ */
+
+public class SpeechRecognitionLauncher extends SpeechRecognizingAndSpeakingActivity {
 	private static final String TAG = "SpeechRecognitionLauncher";
 	public static final String TYPE_OF_LOCATION_OR_EVENT = "info.shangma.thehills.locationAndevent";
 	

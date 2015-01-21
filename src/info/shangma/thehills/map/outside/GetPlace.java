@@ -18,6 +18,13 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/**
+ * @author Shang Ma
+ *
+ * www.shangma.info
+ */
+
+
 public class GetPlace extends AsyncTask<Void, Void, Void> {
 	
 	private final static String TAG = "GetPlace";

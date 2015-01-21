@@ -15,12 +15,11 @@ import org.json.JSONObject;
 import android.util.Log;
 
 /**
- *  Create request for Places API.
- * 
- * @author Karn Shah
- * @Date   10/3/2013
+ * @author Shang Ma
  *
+ * www.shangma.info
  */
+
 public class PlacesService {
 	
 	private final static String TAG = "PlacesService";
