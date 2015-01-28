@@ -90,7 +90,8 @@ public class StartCommand implements VoiceActionCommand
 
                 return understood;
 			}
-        }
+        } 
+        
         which = matcher.isInAt(heard.getLowercase());
 		Log.d(TAG, "which is: " + which);
         

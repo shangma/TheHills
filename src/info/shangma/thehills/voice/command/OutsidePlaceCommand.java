@@ -34,6 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.alchemyapi.api.AlchemyAPI;
+import com.google.android.gms.common.api.e;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.content.Context;
@@ -95,59 +96,64 @@ public class OutsidePlaceCommand implements VoiceActionCommand
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			if (targetKeyword != null) {
-				
-		        Location currentLocation = ((Application)this.mContext.getApplicationContext()).getCurrentLocation();
-		        
-				String firstRevised = targetKeyword.toLowerCase().replace(" ", "+");
-				StringBuilder secondRevised = new StringBuilder();
-				secondRevised.append("\"").append(firstRevised).append("\"");
-				final String finalString = secondRevised.toString();
-				
-				Log.d(TAG, "final search keyword: " + finalString);
-				
-
-				try {
-					placeTask = new GetPlace(this.mContext, finalString, LocationActivity.PLACE_WITH_KEYWORD_SEARCH, currentLocation);
-					placeTask.execute();
-					placeTask.get();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				if (placeTask.findAnyPlaces()) {
-					executor.speak(placePrompt);
-					understood = true;
-					
-					((Application)this.mContext.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
-
-					((Application)this.mContext.getApplicationContext()).setFoundPlaces(placeTask.getFoundPlaces());
-					((Application)this.mContext.getApplicationContext()).setKeywordSearched(finalString);
-					
-					Timer timer_1 = new Timer();
-
-					timer_1.schedule(new TimerTask() {
-
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							Intent intent = new Intent(OutsidePlaceCommand.this.mContext,LocationActivity.class);
-							intent.putExtra(LocationActivity.CURRENT_PLACE, finalString);
-							intent.putExtra(LocationActivity.CURRENT_PLACE_TYPE, LocationActivity.PLACE_WITH_KEYWORD_SEARCH);
-							((SpeechRecognitionLauncher) OutsidePlaceCommand.this.mContext).startActivity(intent);
-							((SpeechRecognitionLauncher) OutsidePlaceCommand.this.mContext).finish();
-						}
-					}, 1000);
-					
-			        return understood;
-				}
-			} 
+        } else {
+			targetKeyword = heard.getSource();
 		}
+		
+        Log.d(TAG, "Target keyword: " + targetKeyword);
+        
+		if (targetKeyword != null) {
+			
+	        Location currentLocation = ((Application)this.mContext.getApplicationContext()).getCurrentLocation();
+	        
+			String firstRevised = targetKeyword.toLowerCase().replace(" ", "+");
+			StringBuilder secondRevised = new StringBuilder();
+			secondRevised.append("\"").append(firstRevised).append("\"");
+			final String finalString = secondRevised.toString();
+			
+			Log.d(TAG, "final search keyword: " + finalString);
+			
+
+			try {
+				placeTask = new GetPlace(this.mContext, finalString, LocationActivity.PLACE_WITH_KEYWORD_SEARCH, currentLocation);
+				placeTask.execute();
+				placeTask.get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if (placeTask.findAnyPlaces()) {
+				executor.speak(placePrompt);
+				understood = true;
+				
+				((Application)this.mContext.getApplicationContext()).SendMessage(CommonUtil.MOVE_COMMAND);
+
+				((Application)this.mContext.getApplicationContext()).setFoundPlaces(placeTask.getFoundPlaces());
+				((Application)this.mContext.getApplicationContext()).setKeywordSearched(finalString);
+				
+				Timer timer_1 = new Timer();
+
+				timer_1.schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						Intent intent = new Intent(OutsidePlaceCommand.this.mContext,LocationActivity.class);
+						intent.putExtra(LocationActivity.CURRENT_PLACE, finalString);
+						intent.putExtra(LocationActivity.CURRENT_PLACE_TYPE, LocationActivity.PLACE_WITH_KEYWORD_SEARCH);
+						((SpeechRecognitionLauncher) OutsidePlaceCommand.this.mContext).startActivity(intent);
+						((SpeechRecognitionLauncher) OutsidePlaceCommand.this.mContext).finish();
+					}
+				}, 1000);
+				
+		        return understood;
+			}
+		} 
+
         
         /*
 		int which = matcher.isInAt(heard.getWords());

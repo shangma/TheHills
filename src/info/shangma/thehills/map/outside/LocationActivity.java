@@ -390,7 +390,7 @@ public class LocationActivity extends FragmentActivity implements
 			
 			for (int i = 0; i < foundPlaces.size(); i++) {
 				MarkerOptions mOptions = new MarkerOptions()
-						.title(foundPlaces.get(i).getName())
+						.title("Click here to see more")//(foundPlaces.get(i).getName())
 						.position(new LatLng(foundPlaces.get(i).getLatitude(), 
 								foundPlaces.get(i).getLongitude()))
 						.icon(BitmapDescriptorFactory.defaultMarker(mRandom.nextFloat() * 360))
@@ -423,9 +423,14 @@ public class LocationActivity extends FragmentActivity implements
 			
 			Iterator item = mapMarkerOptions.keySet().iterator();
 			
+			
 			while (item.hasNext()) {
 				MarkerOptions mOptions = (MarkerOptions) mapMarkerOptions.get(item.next());
-				mMap.addMarker(mOptions);
+				Marker marker = mMap.addMarker(mOptions);
+				if ((mOptions.getPosition().latitude == foundPlaces.get(0).getLatitude()) &&
+						mOptions.getPosition().longitude == foundPlaces.get(0).getLongitude()) {
+					setDestinationForRouting(marker);
+				}
 			}
 		}
 
@@ -594,7 +599,17 @@ public class LocationActivity extends FragmentActivity implements
 		
 		Log.d(TAG, "the size of instructions: " + instructions.size());
 		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, instructions);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, instructions){
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				// TODO Auto-generated method stub
+				View view = super.getView(position, convertView, parent);
+		        TextView text = (TextView) view.findViewById(android.R.id.text1);
+		        text.setTextColor(Color.BLACK);
+		        return view;
+		    }			
+		};
 		listInstructions.setAdapter(adapter);
 		
 		viewSwitcher.showNext();
@@ -625,7 +640,7 @@ public class LocationActivity extends FragmentActivity implements
 	public void onInit(int status) {
 		// TODO Auto-generated method stub
 		this.readyToSay = true;
-		mTTS.setSpeechRate(0.8f);
+//		mTTS.setSpeechRate(0.8f);
 		mTTS.speak(firstToSay, TextToSpeech.QUEUE_FLUSH, null);
 	}
 }
