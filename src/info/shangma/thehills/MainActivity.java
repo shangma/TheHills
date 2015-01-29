@@ -103,7 +103,7 @@ public class MainActivity extends Activity implements OnInitListener {
 	public void onInsideEventBtn(View view) {
 		Log.d(TAG, "inside event button clicked");
 		Intent intent = new Intent(this, WebViewActivity.class);
-		intent.putExtra(WebViewActivity.DISPLAY_THIS_URL, "http://128.195.204.85/robot/hotelmanage.jsp");
+		intent.putExtra(WebViewActivity.DISPLAY_THIS_URL, "http://bt8.nl/inside_event.html");
 		startActivity(intent);
 	}
 	
